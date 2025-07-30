@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from user_app.api.serializers import RegistrationSerializer
 
+
 # Registration API
 @api_view(['POST'])
 @permission_classes([AllowAny])
