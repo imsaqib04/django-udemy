@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 # from rest_framework import mixins
 
@@ -11,19 +13,43 @@ from watchlist_app.api.serializers import (WatchListSerializer,
                                            StreamPlatformSerializer,
                                            ReviewSerializer)
 
+from watchlist_app.api.permissions import AdminOrReadOnly,ReviewUserOrReadOnly
+
 
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
 
-    def perform_create(self,serializer):
+    def get_queryset(self):
+        return Review.objects.all()
+    
+    def perform_create(self, serializer):
         pk = self.kwargs.get('pk')
         watchlist = WatchList.objects.get(pk=pk)
 
-        serializer.save(watchlist=watchlist)
+        review_user = self.request.user
+        review_queryset = Review.objects.filter(watchlist=watchlist, review_user=review_user)
+
+        if review_queryset.exists():
+            raise ValidationError("You have already reviewed this movie")
+
+        # Save the review first
+        serializer.save(watchlist=watchlist, review_user=review_user)
+
+        # Update number_rating
+        watchlist.number_rating = watchlist.number_rating + 1
+
+        # Correctly update avg_rating (running average)
+        watchlist.avg_rating = (
+            (watchlist.avg_rating * (watchlist.number_rating - 1)) + serializer.validated_data['rating']
+        ) / watchlist.number_rating
+
+        watchlist.save()
+
 
 class ReviewList(generics.ListAPIView):
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
 
     # overwrite quary set
     def get_queryset(self):
@@ -33,6 +59,7 @@ class ReviewList(generics.ListAPIView):
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [ReviewUserOrReadOnly]
 
 
 # class ReviewDetails(mixins.RetrieveModelMixin,generics.GenericAPIView):
@@ -56,20 +83,36 @@ class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
 #         return self.create(request, *args, **kwargs)
 
 
-    #routing kri thi tb
-class StreamPlatformVS(viewsets.ViewSet):
+# just three lines sb kuch aa gya isme we control everything
+class StreamPlatformVS(viewsets.ModelViewSet):
+    queryset = StreamPlatform.objects.all()
+    serializer_class = StreamPlatformSerializer
+
+    # class StreamPlatformVS(viewsets.ReadOnlyModelViewSet):
+    # queryset = StreamPlatform.objects.all()
+    # serializer_class = StreamPlatformSerializer
+
+#     #routing kri thi tb
+# class StreamPlatformVS(viewsets.ViewSet):
     
-    def list(self,request):
-        queryset = StreamPlatform.objects.all()
-        serializer = StreamPlatformSerializer(queryset,many=True,context={'request': request})
-        return Response(serializer.data)
+#     def list(self,request):
+#         queryset = StreamPlatform.objects.all()
+#         serializer = StreamPlatformSerializer(queryset,many=True,context={'request': request})
+#         return Response(serializer.data)
     
-    def retrieve(self,request,pk=None):
-        queryset = StreamPlatform.objects.all()
-        watchlist = get_object_or_404(queryset,pk=pk)
-        serializer = StreamPlatformSerializer(watchlist, context={'request': request})
-        return Response(serializer.data)
+#     def retrieve(self,request,pk=None):
+#         queryset = StreamPlatform.objects.all()
+#         watchlist = get_object_or_404(queryset,pk=pk)
+#         serializer = StreamPlatformSerializer(watchlist, context={'request': request})
+#         return Response(serializer.data)
     
+#     def create(self,request):
+#         serializer = StreamPlatformSerializer(data=request.data, context={'request': request})
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # --- StreamPlatform List & Create ---
 class StreamPlatformAV(APIView):

@@ -23,4 +23,7 @@ urlpatterns = [
 
     path('watch/',include('watchlist_app.api.urls')),
 
+    # path('api-auth',include('rest_framework.url')),
+
+    path('account/',include('user_app.api.urls')),
 ]

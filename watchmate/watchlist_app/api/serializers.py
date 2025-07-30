@@ -3,6 +3,7 @@ from watchlist_app.models import WatchList, StreamPlatform,Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    review_user = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Review
@@ -21,12 +22,14 @@ class WatchListSerializer(serializers.ModelSerializer):
     def get_len_name(self, obj):
         return len(obj.title)  # assuming WatchList model has 'title' field
 
-class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer):
-    watchlist = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='movie-details'  # Ensure this matches URL name
-    )
+class StreamPlatformSerializer(serializers.ModelSerializer):
+    watchlist = WatchListSerializer(many=True, read_only=True)
+
+    # watchlist = serializers.HyperlinkedRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     view_name='movie-details'  # Ensure this matches URL name
+    # )
 
     class Meta:
         model = StreamPlatform
