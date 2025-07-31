@@ -7,7 +7,8 @@ from watchlist_app.api.views import (WatchListAV,
                                     ReviewList,
                                     ReviewDetails,
                                     ReviewCreate,
-                                    StreamPlatformVS)
+                                    StreamPlatformVS,
+                                    UserReview)
 
 router = DefaultRouter()
 router.register('stream',StreamPlatformVS,basename='streamplatform')
@@ -26,5 +27,7 @@ urlpatterns = [
     path('<int:pk>/review-create/',ReviewCreate.as_view(),name='review-create'),
     path('<int:pk>/reviews/',ReviewList.as_view(),name='review-list'),
     path('review/<int:pk>/',ReviewDetails.as_view(),name='reviw-details'),
+
+    path('reviews/',UserReview.as_view(),name='user-review-details'),
 ]
 
