@@ -125,29 +125,34 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         #'rest_framework.authentication.TokenAuthentication',
-#         #'rest_framework.permissions.IsAuthenticated',
-#     ],
-# }
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-}
+    ],
 
-REST_FRAMEWORK = {
-    # 'DEFAULT_THROTTLE_CLASSES': [
-    #     'rest_framework.throttling.AnonRateThrottle',
-    #     'rest_framework.throttling.UserRateThrottle'
-    # ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': '5/day',
         'user': '10/day',
-        'review-create':'2/day',
-        'review-list':'10/day',
-        'review-detail':'2/day',
-    }
+        'review-create': '2/day',
+        'review-list': '10/day',
+        'review-detail': '2/day',
+    },
+
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        # Uncomment below if you want browsable API
+        # 'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    
+    # Uncomment if you need pagination
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 2,
 }
 
