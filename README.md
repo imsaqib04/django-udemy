@@ -1,6 +1,10 @@
-\# 🎬 Watchmate
 
-**Watchmate** is a web application built using the Django REST Framework (DRF). It allows users to manage and track their personal watchlists of movies and series. The app provides a robust, RESTful API for managing watchlists, streaming platforms, and user reviews — making it easily integrable with any frontend.
+````markdown
+# 🎬 Watchmate
+
+**Watchmate** is a web application built using the **Django REST Framework (DRF)**.  
+It allows users to manage and track their personal watchlists of movies and series.  
+The app provides a robust RESTful API for managing watchlists, streaming platforms, and user reviews — making it easily integrable with any frontend.
 
 ---
 
@@ -19,92 +23,116 @@
 
 ## 🛠️ Installation
 
-> Make sure Python and pip are installed on your system.
+> Make sure **Python** and **pip** are installed on your system.
 
 ### 1. Clone the Repository
-
+```bash
 git clone <your-repository-url>
 cd watchmate
+````
 
-2. Create and Activate a Virtual Environment
-For macOS/Linux:
+### 2. Create and Activate a Virtual Environment
 
+**macOS/Linux**
+
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
-For Windows:
+**Windows**
+
+```bash
 python -m venv venv
 venv\Scripts\activate
+```
 
-3. Install Dependencies
+### 3. Install Dependencies
+
+```bash
 pip install Django djangorestframework djangorestframework-authtoken django-filters
+```
 
-4. Run Migrations
+### 4. Run Migrations
+
+```bash
 python manage.py makemigrations
 python manage.py migrate
+```
 
-5. Create a Superuser
+### 5. Create a Superuser
+
+```bash
 python manage.py createsuperuser
+```
 
-▶️ Usage
+---
+
+## ▶️ Usage
+
 Start the development server:
 
+```bash
 python manage.py runserver
+```
 
-Visit the API: http://127.0.0.1:8000/
+* **API**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+* **Admin Panel**: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 
-Admin Panel: http://127.0.0.1:8000/admin/
+Test APIs using **Postman**, **Insomnia**, or your own frontend.
 
-You can test APIs using tools like Postman, Insomnia, or through your own frontend.
+---
 
-📚 API Endpoints
-🔐 User Authentication
-Endpoint	Method	Description
+## 📚 API Endpoints
 
-/account/register/	POST	Register a new user
+### 🔐 User Authentication
 
-/account/login/	POST	Obtain an auth token
+| Endpoint             | Method | Description                  |
+| -------------------- | ------ | ---------------------------- |
+| `/account/register/` | POST   | Register a new user          |
+| `/account/login/`    | POST   | Obtain an auth token         |
+| `/account/logout/`   | POST   | Invalidate the current token |
 
-/account/logout/	POST	Invalidate the current token
+---
 
+### 🌐 Streaming Platforms
 
-🌐 Streaming Platforms
+| Endpoint                  | Method           | Description                       |
+| ------------------------- | ---------------- | --------------------------------- |
+| `/watch/stream/`          | GET, POST        | List all or create a new platform |
+| `/watch/stream/<int:pk>/` | GET, PUT, DELETE | Retrieve, update, or delete       |
 
-Endpoint	Method	Description
+---
 
-/watch/stream/	GET, POST	List all or create a new platform
+### 📺 Watchlist
 
-/watch/stream/<int:pk>/	GET, PUT, DELETE	Retrieve, update, or delete
+| Endpoint           | Method           | Description                         |
+| ------------------ | ---------------- | ----------------------------------- |
+| `/watch/list/`     | GET, POST        | List all items or add a new one     |
+| `/watch/<int:pk>/` | GET, PUT, DELETE | Retrieve, update, or delete an item |
+| `/watch/list2/`    | GET              | Paginated list with search          |
 
+---
 
-📺 Watchlist
+### 📝 Reviews
 
-Endpoint	Method	Description
+| Endpoint                              | Method           | Description                                   |
+| ------------------------------------- | ---------------- | --------------------------------------------- |
+| `/watch/<int:pk>/reviews/`            | GET              | Get all reviews for a specific watchlist item |
+| `/watch/<int:pk>/review-create/`      | POST             | Create a new review                           |
+| `/watch/review/<int:pk>/`             | GET, PUT, DELETE | Retrieve, update, or delete a review          |
+| `/watch/reviews/?username=<username>` | GET              | Get all reviews by a specific user            |
 
-/watch/list/	GET, POST	List all items or add a new one
+---
 
-/watch/<int:pk>/	GET, PUT, DELETE	Retrieve, update, or delete an item
+## 🤝 Contributing
 
-/watch/list2/	GET	Paginated list with search
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to modify or add.
 
+---
 
-📝 Reviews
+## 📄 License
 
-Endpoint	Method	Description
+This project is licensed under the **MIT License**. You are free to use, modify, and distribute it.
 
-/watch/<int:pk>/reviews/	GET	Get all reviews for a specific watchlist item
-
-/watch/<int:pk>/review-create/	POST	Create a new review
-
-/watch/review/<int:pk>/	GET, PUT, DELETE	Retrieve, update, or delete a review
-
-/watch/reviews/?username=<username>	GET	Get all reviews by a specific user
-
-
-🤝 Contributing
-
-Pull requests are welcome! For major changes, open an issue first to discuss what you would like to modify or add.
-
-📄 License
-
-This project is licensed under the MIT License. Feel free to use it as you like.
+```
